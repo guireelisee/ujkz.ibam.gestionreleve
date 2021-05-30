@@ -20,6 +20,7 @@ public class ServiceDbConnection {
     }
   }
 
+  // La méthode crée une connexion à la base de données si celle-ci n'existe pas encore
   public static Connection getConnection() {
     if (connexion == null) {
       new ServiceDbConnection();
