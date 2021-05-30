@@ -2,12 +2,19 @@ package ujkz.ibam.models;
 
 import java.util.Date;
 
+/* Un objet Note comprend:
+  - un code
+  - une valeur
+  - une date de composition
+  - une sesion (Normale / Rattrapage)
+*/
 public class Note {
   private int codeNote;
   private double valeur;
   private Date dateDevoir;
   private String session;
 
+  // Les constructeurs
   public Note() {
   }
 
@@ -17,6 +24,7 @@ public class Note {
     this.session = session;
   }
 
+  // Les getters et les setters
   public int getCodeNote() {
     return this.codeNote;
   }
@@ -47,21 +55,6 @@ public class Note {
 
   public void setSession(String session) {
     this.session = session;
-  }
-
-  public Note valeur(double valeur) {
-    setValeur(valeur);
-    return this;
-  }
-
-  public Note dateDevoir(Date dateDevoir) {
-    setDateDevoir(dateDevoir);
-    return this;
-  }
-
-  public Note session(String session) {
-    setSession(session);
-    return this;
   }
 
 }

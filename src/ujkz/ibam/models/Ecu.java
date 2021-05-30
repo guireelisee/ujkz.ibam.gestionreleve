@@ -1,10 +1,16 @@
 package ujkz.ibam.models;
 
+/* Un objet Ecu (consideré comme la matière) comprend:
+  - un code
+  - un libellé
+  - un crédit
+*/
 public class Ecu {
     private int codeEcu;
   private String libelleEcu;
   private int creditEcu;
 
+  // Les constructeurs
   public Ecu() {
   }
 
@@ -14,6 +20,7 @@ public class Ecu {
     this.creditEcu = creditEcu;
   }
 
+  // Les getters et les setters
   public int getCodeEcu() {
     return this.codeEcu;
   }
@@ -36,21 +43,6 @@ public class Ecu {
 
   public void setCreditEcu(int creditEcu) {
     this.creditEcu = creditEcu;
-  }
-
-  public Ecu codeEcu(int codeEcu) {
-    setCodeEcu(codeEcu);
-    return this;
-  }
-
-  public Ecu libelleEcu(String libelleEcu) {
-    setLibelleEcu(libelleEcu);
-    return this;
-  }
-
-  public Ecu creditEcu(int creditEcu) {
-    setCreditEcu(creditEcu);
-    return this;
   }
 
 }

@@ -1,5 +1,12 @@
 package ujkz.ibam.models;
 
+/* Un objet Etudiant comprend:
+  - un matricule
+  - un nom
+  - un prenom
+  - une adresse mail
+  - un numéro de téléphone
+*/
 public class Etudiant {
   private int matricule;
   private String nom;
@@ -7,6 +14,7 @@ public class Etudiant {
   private String email;
   private String phone;
 
+  // Les constructeurs
   public Etudiant() {
   }
 
@@ -18,6 +26,7 @@ public class Etudiant {
     this.phone = phone;
   }
 
+  // Les getters et les setters
   public int getMatricule() {
     return this.matricule;
   }
@@ -62,26 +71,5 @@ public class Etudiant {
     setMatricule(matricule);
     return this;
   }
-
-  public Etudiant nom(String nom) {
-    setNom(nom);
-    return this;
-  }
-
-  public Etudiant prenom(String prenom) {
-    setPrenom(prenom);
-    return this;
-  }
-
-  public Etudiant email(String email) {
-    setEmail(email);
-    return this;
-  }
-
-  public Etudiant phone(String phone) {
-    setPhone(phone);
-    return this;
-  }
-
 
 }

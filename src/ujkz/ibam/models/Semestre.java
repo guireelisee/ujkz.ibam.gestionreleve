@@ -2,12 +2,19 @@ package ujkz.ibam.models;
 
 import java.util.Date;
 
+/* Un objet Semestre comprend:
+  - un code
+  - un libellé
+  - une date de debut
+  - une date de fin
+*/
 public class Semestre {
   private int codeSemestre;
   private String libelleSemestre;
   private Date dateDebut;
   private Date dateFin;
 
+  // Les constructeurs
   public Semestre() {
   }
 
@@ -18,6 +25,7 @@ public class Semestre {
     this.dateFin = dateFin;
   }
 
+  // Les getters et les setters
   public int getCodeSemestre() {
     return this.codeSemestre;
   }
@@ -48,26 +56,6 @@ public class Semestre {
 
   public void setDateFin(Date dateFin) {
     this.dateFin = dateFin;
-  }
-
-  public Semestre codeSemestre(int codeSemestre) {
-    setCodeSemestre(codeSemestre);
-    return this;
-  }
-
-  public Semestre libelleSemestre(String libelleSemestre) {
-    setLibelleSemestre(libelleSemestre);
-    return this;
-  }
-
-  public Semestre dateDebut(Date dateDebut) {
-    setDateDebut(dateDebut);
-    return this;
-  }
-
-  public Semestre dateFin(Date dateFin) {
-    setDateFin(dateFin);
-    return this;
   }
 
 }

@@ -1,12 +1,18 @@
 package ujkz.ibam.models;
 
-
+/* Un objet Ue comprend:
+  - un code
+  - un libellé
+  - un crédit
+  - un type (Fondamentale / Transversale / Complémentaire)
+*/
 public class Ue {
   private int codeUe;
   private String libelleUe;
   private int creditUe;
   private String typeUe;
 
+  // Les constructeurs
   public Ue() {
   }
 
@@ -17,6 +23,7 @@ public class Ue {
     this.typeUe = typeUe;
   }
 
+  // Les getters et les setters
   public int getCodeUe() {
     return this.codeUe;
   }
@@ -47,26 +54,6 @@ public class Ue {
 
   public void setTypeUe(String typeUe) {
     this.typeUe = typeUe;
-  }
-
-  public Ue codeUe(int codeUe) {
-    setCodeUe(codeUe);
-    return this;
-  }
-
-  public Ue libelleUe(String libelleUe) {
-    setLibelleUe(libelleUe);
-    return this;
-  }
-
-  public Ue creditUe(int creditUe) {
-    setCreditUe(creditUe);
-    return this;
-  }
-
-  public Ue typeUe(String typeUe) {
-    setTypeUe(typeUe);
-    return this;
   }
 
 }

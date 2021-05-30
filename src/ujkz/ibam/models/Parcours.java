@@ -1,10 +1,16 @@
 package ujkz.ibam.models;
 
+/* Un objet Parcours comprend:
+  - un code
+  - un libellé
+  - un diplôme associé
+*/
 public class Parcours {
   private int codeParcours;
   private String libelleParcours;
   private String diplomeParcours;
 
+  // Les constructeurs
   public Parcours() {
   }
 
@@ -14,6 +20,7 @@ public class Parcours {
     this.diplomeParcours = diplomeParcours;
   }
 
+  // Les getters et les setters
   public int getCodeParcours() {
     return this.codeParcours;
   }
@@ -36,21 +43,6 @@ public class Parcours {
 
   public void setDiplomeParcours(String diplomeParcours) {
     this.diplomeParcours = diplomeParcours;
-  }
-
-  public Parcours codeParcours(int codeParcours) {
-    setCodeParcours(codeParcours);
-    return this;
-  }
-
-  public Parcours libelleParcours(String libelleParcours) {
-    setLibelleParcours(libelleParcours);
-    return this;
-  }
-
-  public Parcours diplomeParcours(String diplomeParcours) {
-    setDiplomeParcours(diplomeParcours);
-    return this;
   }
 
 }
