@@ -349,7 +349,7 @@ public class ServiceParcours {
         sc = new Scanner(System.in);
         String reponse = sc.nextLine();
         if (reponse.equals("O") || reponse.equals("o")) {
-          ResultSet rsParc = findByCodeParcours(codeParcours);
+          ResultSet rsParc = ServiceSemestre.findSemestreByCodeParcours(codeParcours);
           while (rsParc.next()) {
             ServiceSemestre.deleteSemestre(rsParc.getInt("codeSemestre"));
           }
