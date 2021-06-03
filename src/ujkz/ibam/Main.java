@@ -27,13 +27,17 @@ public class Main {
                         int choixEtudiant = menuEtudiant();
                         switch (choixEtudiant) {
                             case 1:
-                                ServiceEtudiant.afficherReleve();
+                            ServiceEtudiant.afficherReleveEtudiants();
                                 break;
                             case 2:
-                                ServiceEtudiant.afficherListeEtudiants();
+                                ServiceEtudiant.afficherReleveParEtudiant();
                                 break;
 
                             case 3:
+                                ServiceEtudiant.afficherListeEtudiants();
+                                break;
+
+                            case 4:
                                 matricule = ServiceEtudiant.enregistrerEtudiant();
                                 System.out.print("\n\n\t\t\tVoulez-vous ajouter une note? [O/n] ");
                                 sc = new Scanner(System.in);
@@ -43,15 +47,15 @@ public class Main {
                                 }
                                 break;
 
-                            case 4:
+                            case 5:
                                 ServiceEtudiant.modifierEtudiant();
                                 break;
 
-                            case 5:
+                            case 6:
                                 ServiceEtudiant.supprimerEtudiant();
                                 break;
 
-                            case 6:
+                            case 7:
                                 ServiceEtudiant.rechercherEtudiant();
                                 break;
 
@@ -330,17 +334,19 @@ public class Main {
             System.out.println(trait);
             System.out.println("\t\t    | |               ETUDIANTS                 | |");
             System.out.println(trait);
-            System.out.println("\t\t    * *    1-    Afficher relevé d'un étudiant  * *");
+            System.out.println("\t\t    * *    1-    Afficher tous les relevés      * *");
             System.out.println(trait);
-            System.out.println("\t\t    * *    2-    Afficher tous les étudiants    * *");
+            System.out.println("\t\t    * *    2-    Afficher relevé d'un étudiant  * *");
             System.out.println(trait);
-            System.out.println("\t\t    * *    3-    Enregistrer un étudiant        * *");
+            System.out.println("\t\t    * *    3-    Afficher tous les étudiants    * *");
             System.out.println(trait);
-            System.out.println("\t\t    * *    4-    Modifier un étudiant           * *");
+            System.out.println("\t\t    * *    4-    Enregistrer un étudiant        * *");
             System.out.println(trait);
-            System.out.println("\t\t    * *    5-    Supprimer un étudiant          * *");
+            System.out.println("\t\t    * *    5-    Modifier un étudiant           * *");
             System.out.println(trait);
-            System.out.println("\t\t    * *    6-    Rechercher un étudiant         * *");
+            System.out.println("\t\t    * *    6-    Supprimer un étudiant          * *");
+            System.out.println(trait);
+            System.out.println("\t\t    * *    7-    Rechercher un étudiant         * *");
             System.out.println(trait);
             System.out.println("\t\t    * *    0-    Revenir au menu principal      * *");
             System.out.println(trait);

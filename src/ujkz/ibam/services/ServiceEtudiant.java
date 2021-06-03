@@ -510,7 +510,7 @@ public class ServiceEtudiant {
     }
   }
 
-  public static void afficherReleve() throws SQLException {
+  public static void afficherReleveParEtudiant() throws SQLException {
     String trait = "\t\t    | |                                                       | |";
     int codeSemestre = 0;
     int matricule = 0;
@@ -558,7 +558,7 @@ public class ServiceEtudiant {
               System.out.println("\n\t\t    Semestre(s) disponible(s):");
               count++;
             }
-            System.out.println("\n\t\t    * SEMESTRE : " + rsAllSem.getString("libelleSemestre") + "   CODE: "
+            System.out.println("\n\t\t    * SEMESTRE: " + rsAllSem.getString("libelleSemestre") + "   CODE: "
                 + rsAllSem.getInt("codeSemestre"));
           }
           testSaisie = false;
@@ -603,14 +603,14 @@ public class ServiceEtudiant {
                       System.out.println("\t\t    * *       Nom: " + rsEtud.getString("nom") + "    Prénom(s): "
                           + rsEtud.getString("prenom"));
                       System.out.println(trait);
-                      System.out.println("\t\t    * *       PARCOURS : " + rsEtudParc.getString("libelleParcours"));
+                      System.out.println("\t\t    * *       PARCOURS: " + rsEtudParc.getString("libelleParcours"));
                       System.out.println(trait);
-                      System.out.println("\t\t    * *       SEMESTRE : " + rsEtudSem.getString("libelleSemestre")+"  CREDIT : "+totalCredit);
+                      System.out.println("\t\t    * *       SEMESTRE: " + rsEtudSem.getString("libelleSemestre")+"  CREDIT: "+totalCredit);
                       count++;
                     }
                     System.out.println(trait);
                     if (rsEtudUe.getInt("codeUe") != codeUe){
-                      System.out.println("\t\t    * *       UE : " + rsEtudUe.getString("libelleUe") + " TYPE : "+ rsEtudUe.getString("typeUe") + " CREDIT : " + rsEtudUe.getString("creditUe"));
+                      System.out.println("\t\t    * *       UE: " + rsEtudUe.getString("libelleUe") + " TYPE: "+ rsEtudUe.getString("typeUe") + " CREDIT: " + rsEtudUe.getString("creditUe"));
                     }
                     codeUe = rsEtudUe.getInt("codeUe");
                     System.out.println(trait);
@@ -652,7 +652,7 @@ public class ServiceEtudiant {
               if (noteTest) {
                 String decision = (semValide) ? "Semestre validé" : "Semestre non validé";
                 System.out.println(trait);
-                System.out.println("\t\t    * *       MOYENNE GÉNÉRALE: " + (double)Math.round(moy * 100) / 100 + "      PONDÉRÉE " + pond);
+                System.out.println("\t\t    * *       MOYENNE GÉNÉRALE: " + (double)Math.round(moy * 100) / 100 + "      PONDÉRÉE: " + pond);
                 System.out.println(trait);
                 System.out.println("\n\t\t    * *          DÉCISION DU JURY: " + decision);
                 System.out.println(trait);
@@ -681,6 +681,172 @@ public class ServiceEtudiant {
       } else {
         System.out.print("\n\t\t               Etudiant introuvable!\n");
         }
+    } else {
+      System.out.print("\n\t\t              Pas d'étudiant enregistré !\n");
+      }
+  }
+
+  public static void afficherReleveEtudiants() throws SQLException {
+    String trait = "\t\t    | |                                                       | |";
+    int codeSemestre = 0;
+    int matricule = 0;
+    int count = 0;
+    boolean testSaisie = false;
+    boolean semValide = false;
+    Double moy = 0.0;
+    Double pond = 0.0;
+    boolean noteTest = false;
+    int countSem = 0;
+    int totalCredit = 0;
+    int codeUe = 0;
+
+
+    if (findAll().next()) {
+      ResultSet rsAllSem = ServiceSemestre.findAll();
+      while (rsAllSem.next()) {
+        if (count == 0) {
+          System.out.println("\n\t\t    Semestre(s) disponible(s):");
+          count++;
+        }
+        System.out.println("\n\t\t    * SEMESTRE: " + rsAllSem.getString("libelleSemestre") + "   CODE: "
+            + rsAllSem.getInt("codeSemestre"));
+      }
+      testSaisie = false;
+      do {
+        sc = new Scanner(System.in);
+        System.out.print("\n\tCode du semestre: ");
+        try {
+          codeSemestre = sc.nextInt();
+          testSaisie = true;
+        } catch (Exception e) {
+          System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
+        }
+        sc.reset();
+      } while (!testSaisie);
+      ResultSet rsEtudAll = findAll();
+      while (rsEtudAll.next()) {
+        moy = 0.0;
+        pond = 0.0;
+        matricule = rsEtudAll.getInt("matricule");
+        ResultSet rsEtud = findByMatricule(matricule);
+        rsEtud.next();
+        if (ServiceNote.findByMatricule(matricule).next()) {
+          count = 0;
+          if (ServiceParcours.findAll().next()) {
+            if (ServiceSemestre.findByCodeSemestre(codeSemestre).next()) {
+              try {
+                count = 0;
+                ResultSet rsEtudNote = ServiceNote.findByMatricule(matricule);
+                while (rsEtudNote.next()) {
+                  ResultSet rsEtudEcu = ServiceEcu.findByCodeEcu(rsEtudNote.getInt("codeEcu"));
+                  rsEtudEcu.next();
+                  ResultSet rsEtudUe = ServiceUe.findByCodeUe(rsEtudEcu.getInt("codeUe"));
+                  rsEtudUe.next();
+                  ResultSet rsEtudSem = ServiceSemestre.findByCodeSemestre(rsEtudUe.getInt("codeSemestre"));
+                  rsEtudSem.next();
+                  if (rsEtudSem.getInt("codeSemestre") == codeSemestre) {
+                    ResultSet rsCreditUe = ServiceUe.sumCreditUe(codeSemestre);
+                    rsCreditUe.next();
+                    totalCredit = rsCreditUe.getInt("sum");
+
+                    ResultSet rsEtudParcSem = ServiceSemestre.findParcoursByCodeSemestre(codeSemestre);
+                    rsEtudParcSem.next();
+                    ResultSet rsEtudParc = ServiceParcours.findByCodeParcours(rsEtudParcSem.getInt("codeParcours"));
+                    rsEtudParc.next();
+                    if (count == 0) {
+                      System.out.println("\n\t\t    .+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--+-+-++.");
+                      System.out.println("\t\t    | .*******************************************************. |");
+                      System.out.println(trait);
+                      System.out.println("\t\t    | |                     RELEVE DE NOTES                   | |");
+                      System.out.println(trait);
+                      System.out.println("\t\t    * *       Nom: " + rsEtud.getString("nom") + "    Prénom(s): "
+                          + rsEtud.getString("prenom"));
+                      System.out.println(trait);
+                      System.out.println("\t\t    * *       PARCOURS: " + rsEtudParc.getString("libelleParcours"));
+                      System.out.println(trait);
+                      System.out.println("\t\t    * *       SEMESTRE: " + rsEtudSem.getString("libelleSemestre")+"  CREDIT: "+totalCredit);
+                      count++;
+                    }
+                    System.out.println(trait);
+                    if (rsEtudUe.getInt("codeUe") != codeUe){
+                      System.out.println("\t\t    * *       UE: " + rsEtudUe.getString("libelleUe") + " TYPE: "+ rsEtudUe.getString("typeUe") + " CREDIT: " + rsEtudUe.getString("creditUe"));
+                    }
+                    codeUe = rsEtudUe.getInt("codeUe");
+                    System.out.println(trait);
+                    System.out.println("\t\t    * *              ECU: " + rsEtudEcu.getString("libelleEcu"));
+                    System.out.println("\t\t    * *              NOTE: " + rsEtudNote.getDouble("valeur") + " / 20");
+                    System.out.println("\t\t    * *              CREDIT: " + rsEtudEcu.getInt("creditEcu"));
+                    System.out.println("\t\t    * *              SESSION: " + rsEtudNote.getString("session"));
+
+
+                    pond = pond + (rsEtudNote.getDouble("valeur") * rsEtudEcu.getInt("creditEcu"));
+                    moy = (pond / totalCredit);
+                    if (rsEtudNote.getInt("valeur") >= 10) {
+                      System.out.println("\t\t    * *              Statut: ECU validé!");
+                      semValide = true;
+                    }
+                    if (rsEtudNote.getInt("valeur") < 5) {
+                      System.out.println("\t\t    * *              Statut: ECU à récomposer!");
+                      semValide = false;
+                    }
+                    if (moy >= 12) {
+                      if (rsEtudNote.getInt("valeur") == 5) {
+                        System.out.println("\t\t    * *              Statut: ECU validé!");
+                      }
+                      semValide = true;
+                    } else {
+                      if (rsEtudNote.getInt("valeur") == 5) {
+                        System.out.println("\t\t    * *              Statut: ECU à récomposer!");
+                      }
+                      semValide = false;
+                    }
+                    noteTest = true;
+                  } else {
+                    countSem++;
+                  }
+                }
+              } catch (Exception e) {
+                System.out.print("\n\t\t           Pas de notes associé à ce semestre !\n");
+              }
+              if (noteTest) {
+                String decision = (semValide) ? "Semestre validé" : "Semestre non validé";
+                System.out.println(trait);
+                System.out.println("\t\t    * *       MOYENNE GÉNÉRALE: " + (double)Math.round(moy * 100) / 100 + "      PONDÉRÉE: " + pond);
+                System.out.println(trait);
+                System.out.println("\n\t\t    * *          DÉCISION DU JURY: " + decision);
+                System.out.println(trait);
+                System.out.println(trait);
+                System.out.println("\t\t    | '*******************************************************' |");
+                System.out.println("\t\t    '-+-+-+-+-+-+-+-+-+-++-+-+-+-+-+-+-+-+-+-+-+-+-+++++-+-+-+-'");
+              }
+              ResultSet rsCount = ServiceSemestre.sumTable();
+              rsCount.next();
+              if (countSem == rsCount.getInt("sum")) {
+                System.out.print("\n\t\t           Pas de notes associé à ce semestre!\n");
+              }
+            } else{
+              countSem++;
+            }
+            ResultSet rsCount = ServiceSemestre.sumTable();
+            rsCount.next();
+            if (countSem == rsCount.getInt("sum")) {
+              System.out.print("\n\t\t             Semestre inexistant, réessayer!\n");
+            }
+          } else {
+            System.out.print("\n\t\t             Pas de parcours enregistré!\n");
+          }
+        } else {
+          System.out.print("\n\t\t             Cet étudiant n'a pas de relevé!\n");
+          }
+          ResultSet rsCount = ServiceSemestre.sumTable();
+          rsCount.next();
+          if (countSem != rsCount.getInt("sum")) {
+            sc = new Scanner(System.in);
+          System.out.print("\n\n\t\t                Appuyer sur Entrée pour continuer ");
+          sc.nextLine();
+          System.out.print("\n");
+          }
+      }
     } else {
       System.out.print("\n\t\t              Pas d'étudiant enregistré !\n");
       }
