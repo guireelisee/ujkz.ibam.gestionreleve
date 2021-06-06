@@ -524,7 +524,6 @@ public class ServiceEtudiant {
     int totalCredit = 0;
     int codeUe = 0;
 
-
     if (findAll().next()) {
       ResultSet rsAllEtu = findAll();
       while (rsAllEtu.next()) {
@@ -619,26 +618,13 @@ public class ServiceEtudiant {
                     System.out.println("\t\t    * *              CREDIT: " + rsEtudEcu.getInt("creditEcu"));
                     System.out.println("\t\t    * *              SESSION: " + rsEtudNote.getString("session"));
 
-
                     pond = pond + (rsEtudNote.getDouble("valeur") * rsEtudEcu.getInt("creditEcu"));
                     moy = (pond / totalCredit);
-                    if (rsEtudNote.getInt("valeur") >= 10) {
+                    if (rsEtudNote.getInt("valeur") > 4) {
                       System.out.println("\t\t    * *              Statut: ECU validé!");
-                      semValide = true;
-                    }
-                    if (rsEtudNote.getInt("valeur") < 5) {
-                      System.out.println("\t\t    * *              Statut: ECU à récomposer!");
-                      semValide = false;
-                    }
-                    if (moy >= 12) {
-                      if (rsEtudNote.getInt("valeur") == 5) {
-                        System.out.println("\t\t    * *              Statut: ECU validé!");
-                      }
-                      semValide = true;
+                      semValide = (moy >= 10) ? true : false;
                     } else {
-                      if (rsEtudNote.getInt("valeur") == 5) {
-                        System.out.println("\t\t    * *              Statut: ECU à récomposer!");
-                      }
+                      System.out.println("\t\t    * *              Statut: ECU à récomposer!");
                       semValide = false;
                     }
                     noteTest = true;
@@ -699,7 +685,7 @@ public class ServiceEtudiant {
     int countSem = 0;
     int totalCredit = 0;
     int codeUe = 0;
-
+    boolean ecuARecomposer = false;
 
     if (findAll().next()) {
       if (ServiceSemestre.findAll().next()) {
@@ -789,7 +775,7 @@ public class ServiceEtudiant {
                       }
                       if (rsEtudNote.getInt("valeur") < 5) {
                         System.out.println("\t\t    * *              Statut: ECU à récomposer!");
-                        semValide = false;
+                        ecuARecomposer = true;
                       }
                       if (moy >= 12) {
                         if (rsEtudNote.getInt("valeur") == 5) {
@@ -811,7 +797,7 @@ public class ServiceEtudiant {
                   System.out.print("\n\t\t           Pas de notes associé à ce semestre !\n");
                 }
                 if (noteTest) {
-                  String decision = (semValide) ? "Semestre validé" : "Semestre non validé";
+                  String decision = (semValide && !ecuARecomposer) ? "Semestre validé" : "Semestre non validé";
                   System.out.println(trait);
                   System.out.println("\t\t    * *       MOYENNE GÉNÉRALE: " + (double) Math.round(moy * 100) / 100
                       + "      PONDÉRÉE: " + pond);

@@ -438,14 +438,14 @@ public class ServiceSemestre {
           do {
             sc = new Scanner(System.in);
             System.out.println("\n\t\t------------ ENREGISTREMENT SEMESTRE ------------\n");
-            System.out.print("\tCombien de semestre voulez-vous enregistrer (à partir de 2) ? : ");
+            System.out.print("\tCombien de semestre voulez-vous enregistrer ? : ");
             try {
               nombreSemestre = sc.nextInt();
             } catch (Exception e) {
               System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
             }
             sc.reset();
-          } while (nombreSemestre <= 1);
+          } while (nombreSemestre <= 0);
           for (int i = 0; i < nombreSemestre; i++) {
             if (nombreSemestre == 1) {
               System.out.println("\n\t\t------------ ENREGISTREMENT D'UN SEMESTRE ------------\n");
@@ -530,7 +530,117 @@ public class ServiceSemestre {
         System.out.print("\n\t\t              Pas de semestre enregistré !\n");
       }
     } else{
-      System.out.print("\n\t\t              Pas de parcours enregistré !\n");
+      rsAllParc = ServiceParcours.findAll();
+      while (rsAllParc.next()) {
+        if (count == 0) {
+          System.out.println("\n\t\t    Parcours(s) disponible(s):");
+          count++;
+        }
+        System.out.println("\n\t\t    * PARCOURS : " + rsAllParc.getString("libelleParcours") + "   CODE: "
+            + rsAllParc.getInt("codeParcours"));
+      }
+      do {
+        sc = new Scanner(System.in);
+        System.out.print("\n\tCode du parcours: ");
+        try {
+          codeParcours = sc.nextInt();
+          testSaisie = true;
+        } catch (Exception e) {
+          System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
+        }
+        sc.reset();
+      } while (!testSaisie);
+      testSaisie = false;
+      do {
+        sc = new Scanner(System.in);
+        System.out.println("\n\t\t------------ ENREGISTREMENT SEMESTRE ------------\n");
+        System.out.print("\tCombien de semestre voulez-vous enregistrer ? : ");
+        try {
+          nombreSemestre = sc.nextInt();
+        } catch (Exception e) {
+          System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
+        }
+        sc.reset();
+      } while (nombreSemestre <= 0);
+      for (int i = 0; i < nombreSemestre; i++) {
+        if (nombreSemestre == 1) {
+          System.out.println("\n\t\t------------ ENREGISTREMENT D'UN SEMESTRE ------------\n");
+        } else {
+          System.out.println("\n\t\t------------ ENREGISTREMENT DU SEMESTRE N°" + (i + 1) + "------------\n");
+        }
+        sc = new Scanner(System.in);
+        System.out.print("\tLibellé: ");
+        String libelle = sc.nextLine();
+        rsAll = findAll();
+        rsPS = parcSem();
+        semFound = false;
+        while (rsAll.next()) {
+          if (rsAll.getString("libelleSemestre").compareToIgnoreCase(libelle) == 0) {
+            codeSemestre = rsAll.getInt("codeSemestre");
+            while (rsPS.next()) {
+              if (rsPS.getInt("codeParcours") == codeParcours && rsPS.getInt("codeSemestre") == codeSemestre) {
+                semFound = true;
+                break;
+              }
+            }
+          }
+        }
+        if (!semFound) {
+          SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+          Date dateDebut = null;
+          Date dateFin = null;
+          String dateDebutString;
+          String dateFinString;
+          java.sql.Date dateDebutSQL = null;
+          java.sql.Date dateFinSQL = null;
+          do {
+            sc = new Scanner(System.in);
+            System.out.print("\tDate de debut(dd/MM/yyyy): ");
+            dateDebutString = sc.nextLine();
+            try {
+              dateDebut = dateFormat.parse(dateDebutString);
+              SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+              String formattedDate = simpleDateFormat.format(dateDebut);
+              dateDebutSQL = java.sql.Date.valueOf(formattedDate);
+              testSaisie = true;
+            } catch (Exception e) {
+              System.out.print("\n\t\t            Format de la date incorrecte!\n");
+            }
+            sc.reset();
+          } while (!testSaisie);
+          testSaisie = false;
+          do {
+            sc = new Scanner(System.in);
+            System.out.print("\tDate de fin(dd/MM/yyyy): ");
+            dateFinString = sc.nextLine();
+            try {
+              dateFin = dateFormat.parse(dateFinString);
+              SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+              String formattedDate = simpleDateFormat.format(dateFin);
+              dateFinSQL = java.sql.Date.valueOf(formattedDate);
+              testSaisie = true;
+              if (dateFin.compareTo(dateDebut) < 0) {
+                System.out.print("\n\t\t            La date de fin doit être supérieure à la date de debut!\n\n");
+                testSaisie = false;
+              }
+            } catch (Exception e) {
+              System.out.print("\n\t\t            Format de la date incorrecte!\n\n");
+            }
+            sc.reset();
+          } while (!testSaisie);
+
+          Semestre sem = new Semestre(codeSemestre, libelle, dateDebutSQL, dateFinSQL);
+          if (addSemestre(sem)) {
+            addParSem(codeParcours, sem.getCodeSemestre());
+            System.out.print("\tCode généré: " + sem.getCodeSemestre());
+            System.out.print("\n\t\t              Enregistrement réussi!\n");
+          } else {
+            System.out.print("\n\t\t              Enregistrement échoué!\n");
+          }
+        } else {
+          System.out.print("\n\t\t      Semestre déjà existant dans le parcours!\n");
+        }
+      }
     }
   }
 
