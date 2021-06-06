@@ -839,7 +839,7 @@ public class ServiceEtudiant {
               System.out.print("\n\t\t             Pas de parcours enregistré!\n");
             }
           } else {
-            System.out.print("\n\t\t             Cet étudiant n'a pas de relevé!\n");
+            System.out.print("\n\t\t             "+rsEtud.getString("nom")+" "+rsEtud.getString("prenom")+" n'a pas de relevé!\n");
           }
           ResultSet rsCount = ServiceSemestre.sumTable();
           rsCount.next();
