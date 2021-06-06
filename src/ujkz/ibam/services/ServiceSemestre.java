@@ -466,7 +466,6 @@ public class ServiceSemestre {
                 codeSemestre = rsAll.getInt("codeSemestre");
                 while (rsPS.next()) {
                   if (rsPS.getInt("codeParcours") == codeParcours && rsPS.getInt("codeSemestre") == codeSemestre) {
-                    System.out.print("\n\t\t      Semestre déjà existant dans le parcours!\n");
                     semFound = true;
                     break;
                   }
@@ -525,6 +524,8 @@ public class ServiceSemestre {
               } else {
                 System.out.print("\n\t\t              Enregistrement échoué!\n");
               }
+            } else {
+              System.out.print("\n\t\t      Semestre déjà existant dans le parcours!\n");
             }
           }
         }
