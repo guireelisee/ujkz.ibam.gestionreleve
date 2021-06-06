@@ -523,6 +523,7 @@ public class ServiceEtudiant {
     int countSem = 0;
     int totalCredit = 0;
     int codeUe = 0;
+    Boolean ecuARecomposer = false;
 
     if (findAll().next()) {
       ResultSet rsAllEtu = findAll();
@@ -620,11 +621,23 @@ public class ServiceEtudiant {
 
                     pond = pond + (rsEtudNote.getDouble("valeur") * rsEtudEcu.getInt("creditEcu"));
                     moy = (pond / totalCredit);
-                    if (rsEtudNote.getInt("valeur") > 4) {
+                    if (rsEtudNote.getInt("valeur") >= 10) {
                       System.out.println("\t\t    * *              Statut: ECU validé!");
-                      semValide = (moy >= 10) ? true : false;
-                    } else {
+                      semValide = true;
+                    }
+                    if (rsEtudNote.getInt("valeur") < 5) {
                       System.out.println("\t\t    * *              Statut: ECU à récomposer!");
+                      ecuARecomposer = true;
+                    }
+                    if (moy >= 12) {
+                      if (rsEtudNote.getInt("valeur") == 5) {
+                        System.out.println("\t\t    * *              Statut: ECU validé!");
+                      }
+                      semValide = true;
+                    } else {
+                      if (rsEtudNote.getInt("valeur") == 5) {
+                        System.out.println("\t\t    * *              Statut: ECU à récomposer!");
+                      }
                       semValide = false;
                     }
                     noteTest = true;
@@ -636,7 +649,7 @@ public class ServiceEtudiant {
                 System.out.print("\n\t\t           Pas de notes associé à ce semestre !\n");
               }
               if (noteTest) {
-                String decision = (semValide) ? "Semestre validé" : "Semestre non validé";
+                String decision = (semValide && !ecuARecomposer) ? "Semestre validé" : "Semestre non validé";
                 System.out.println(trait);
                 System.out.println("\t\t    * *       MOYENNE GÉNÉRALE: " + (double)Math.round(moy * 100) / 100 + "      PONDÉRÉE: " + pond);
                 System.out.println(trait);
