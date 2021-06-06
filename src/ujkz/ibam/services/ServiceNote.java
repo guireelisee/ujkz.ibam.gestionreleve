@@ -216,7 +216,6 @@ public class ServiceNote {
 
   public static int enregistrerNote() throws SQLException {
     boolean testSaisie = false;
-    int nombreNote = 0;
     int codeEcu = 0;
     int matricule = 0;
     String session = null;
@@ -269,104 +268,84 @@ public class ServiceNote {
           } while (!testSaisie);
           testSaisie = false;
           if (ServiceEcu.findByCodeEcu(codeEcu).next()) {
+            System.out.println("\n\t\t------------ ENREGISTREMENT D'UNE NOTE ------------\n");
+            Double valeur = 0.0;
             do {
               sc = new Scanner(System.in);
-              System.out.println("\n\t\t------------ AJOUT NOTE ------------\n");
-              System.out.print("\tCombien de note voulez-vous enregistrer ? : ");
+              System.out.print("\tValeur: ");
               try {
-                nombreNote = sc.nextInt();
-                if (nombreNote <= 0) {
-                  System.out.print("\n\t\t     Le nombre de notes doit être supérieur à 0!\n");
+                valeur = sc.nextDouble();
+                testSaisie = true;
+                if (valeur < 0 || valeur > 20) {
+                  System.out.print("\n\t\t            La note doit être comprise entre 0-20!\n");
+                  testSaisie = false;
                 }
               } catch (Exception e) {
                 System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
               }
               sc.reset();
-            } while (nombreNote <= 0);
-            for (int i = 0; i < nombreNote; i++) {
-              if (nombreNote == 1) {
-                System.out.println("\n\t\t------------ ENREGISTREMENT D'UNE NOTE ------------\n");
-              } else {
-                System.out.println("\n\t\t------------ ENREGISTREMENT DE LA NOTE N°" + (i + 1) + "------------\n");
-              }
-              Double valeur = 0.0;
-              do {
-                sc = new Scanner(System.in);
-                System.out.print("\tValeur: ");
-                try {
-                  valeur = sc.nextDouble();
-                  testSaisie = true;
-                  if (valeur < 0 || valeur > 20) {
-                    System.out.print("\n\t\t            La note doit être comprise entre 0-20!\n");
-                    testSaisie = false;
-                  }
-                } catch (Exception e) {
-                  System.out.print("\n\t\t            Saisie non numérique, réessayer!\n");
-                }
-                sc.reset();
-              } while (!testSaisie);
-              testSaisie = false;
-              SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-              Date date = null;
-              String dateString;
-              java.sql.Date dateSQL = null;
-              ResultSet rsEcu = ServiceEcu.findByCodeEcu(codeEcu);
-              rsEcu.next();
-              int codeUe = rsEcu.getInt("codeUe");
-              ResultSet rsUe = ServiceUe.findByCodeUe(codeUe);
-              rsUe.next();
-              int codeSem = rsUe.getInt("codeSemestre");
-              ResultSet rsSem = ServiceSemestre.findByCodeSemestre(codeSem);
-              rsSem.next();
-              Calendar cal = Calendar.getInstance();
-              int jourD = 0;
-              int moisD = 0;
-              int anneeD = 0;
+            } while (!testSaisie);
+            testSaisie = false;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date date = null;
+            String dateString;
+            java.sql.Date dateSQL = null;
+            ResultSet rsEcu = ServiceEcu.findByCodeEcu(codeEcu);
+            rsEcu.next();
+            int codeUe = rsEcu.getInt("codeUe");
+            ResultSet rsUe = ServiceUe.findByCodeUe(codeUe);
+            rsUe.next();
+            int codeSem = rsUe.getInt("codeSemestre");
+            ResultSet rsSem = ServiceSemestre.findByCodeSemestre(codeSem);
+            rsSem.next();
+            Calendar cal = Calendar.getInstance();
+            int jourD = 0;
+            int moisD = 0;
+            int anneeD = 0;
 
-              int jourF = 0;
-              int moisF = 0;
-              int anneeF = 0;
-              cal.setTime(rsSem.getDate("dateDebut"));
-              jourD = cal.get(Calendar.DAY_OF_MONTH);
-              moisD = (cal.get(Calendar.MONTH) + 1);
-              anneeD = cal.get(Calendar.YEAR);
+            int jourF = 0;
+            int moisF = 0;
+            int anneeF = 0;
+            cal.setTime(rsSem.getDate("dateDebut"));
+            jourD = cal.get(Calendar.DAY_OF_MONTH);
+            moisD = (cal.get(Calendar.MONTH) + 1);
+            anneeD = cal.get(Calendar.YEAR);
 
-              cal.setTime(rsSem.getDate("dateFin"));
-              jourF = cal.get(Calendar.DAY_OF_MONTH);
-              moisF = (cal.get(Calendar.MONTH) + 1);
-              anneeF = cal.get(Calendar.YEAR);
-              do {
-                sc = new Scanner(System.in);
-                System.out.print("\tDate du devoir(dd/MM/yyyy): ");
-                dateString = sc.nextLine();
-                try {
-                  date = dateFormat.parse(dateString);
-                  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                  String formattedDate = simpleDateFormat.format(date);
-                  dateSQL = java.sql.Date.valueOf(formattedDate);
-                  testSaisie = true;
-                  // Erreur si l'heure saisie n'est pas dans l'intervalle de la période du semestre
-                  if (dateSQL.before(rsSem.getDate("dateDebut")) || dateSQL.after(rsSem.getDate("dateFin"))) {
-                    System.out.println("\n\t\t            La date du devoir doit être comprise entre le "+jourD+"/"+moisD+"/"+anneeD+" et le "+ jourF + "/" + moisF + "/" + anneeF + "!\n");
-                    testSaisie = false;
-                  }
-                } catch (Exception e) {
-                  System.out.println("\n\t\t            Format de la date incorrecte!\n");
-                }
-                sc.reset();
-              } while (!testSaisie);
+            cal.setTime(rsSem.getDate("dateFin"));
+            jourF = cal.get(Calendar.DAY_OF_MONTH);
+            moisF = (cal.get(Calendar.MONTH) + 1);
+            anneeF = cal.get(Calendar.YEAR);
+            do {
               sc = new Scanner(System.in);
-              testSaisie = false;
-              System.out.print("\tSession: ");
-              session = sc.nextLine();
-
-              Note n = new Note(valeur, dateSQL, session);
-              if (addNote(matricule, codeEcu, n)) {
-                System.out.print("\tCode généré: " + n.getCodeNote());
-                System.out.print("\n\t\t              Enregistrement réussi!\n");
-              } else {
-                System.out.print("\n\t\t              Enregistrement échoué!\n");
+              System.out.print("\tDate du devoir(dd/MM/yyyy): ");
+              dateString = sc.nextLine();
+              try {
+                date = dateFormat.parse(dateString);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String formattedDate = simpleDateFormat.format(date);
+                dateSQL = java.sql.Date.valueOf(formattedDate);
+                testSaisie = true;
+                // Erreur si l'heure saisie n'est pas dans l'intervalle de la période du semestre
+                if (dateSQL.before(rsSem.getDate("dateDebut")) || dateSQL.after(rsSem.getDate("dateFin"))) {
+                  System.out.println("\n\t\t            La date du devoir doit être comprise entre le "+jourD+"/"+moisD+"/"+anneeD+" et le "+ jourF + "/" + moisF + "/" + anneeF + "!\n");
+                  testSaisie = false;
+                }
+              } catch (Exception e) {
+                System.out.println("\n\t\t            Format de la date incorrecte!\n");
               }
+              sc.reset();
+            } while (!testSaisie);
+            sc = new Scanner(System.in);
+            testSaisie = false;
+            System.out.print("\tSession: ");
+            session = sc.nextLine();
+
+            Note n = new Note(valeur, dateSQL, session);
+            if (addNote(matricule, codeEcu, n)) {
+              System.out.print("\tCode généré: " + n.getCodeNote());
+              System.out.print("\n\t\t              Enregistrement réussi!\n");
+            } else {
+              System.out.print("\n\t\t              Enregistrement échoué!\n");
             }
           } else {
             System.out.print("\n\t\t            ECU inexistant, réessayer!\n");

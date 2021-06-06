@@ -333,9 +333,6 @@ public class ServiceSemestre {
     int nombreSemestre = 0;
     int codeSemestre = 0;
     int codeParcours = 0;
-    ResultSet rsSum = sumTable();
-    rsSum.next();
-    int sum = rsSum.getInt("sum");
     int count = 0;
     ResultSet rsAll = null;
     ResultSet rsAllParc = null;
